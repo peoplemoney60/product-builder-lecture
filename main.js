@@ -1,6 +1,6 @@
 const URL = "https://teachablemachine.withgoogle.com/models/IjLLUaOge/";
 
-let model, webcam, labelContainer, maxPredictions;
+let model, labelContainer, maxPredictions;
 
 // Load the image model
 async function loadModel() {
@@ -34,34 +34,10 @@ async function readURL(input) {
     }
 }
 
-// Handle Webcam
-async function initWebcam() {
-    document.querySelector('.upload-section').style.display = 'none';
-    document.getElementById('loading').style.display = 'block';
-
-    const flip = true;
-    webcam = new tmImage.Webcam(300, 300, flip);
-    await webcam.setup();
-    await webcam.play();
-    
-    document.getElementById('loading').style.display = 'none';
-    document.querySelector('.file-upload-content').style.display = 'block';
-    document.getElementById('face-image').style.display = 'none';
-    document.getElementById('webcam-container').appendChild(webcam.canvas);
-    
-    window.requestAnimationFrame(loop);
-}
-
-async function loop() {
-    webcam.update();
-    await predict();
-    window.requestAnimationFrame(loop);
-}
-
 // Prediction Logic
 async function predict() {
-    const target = webcam ? webcam.canvas : document.getElementById('face-image');
-    const prediction = await model.predict(target);
+    const faceImage = document.getElementById('face-image');
+    const prediction = await model.predict(faceImage);
     
     // Sort predictions to find the top result
     prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
@@ -106,13 +82,7 @@ function displayResults(topResult, allPredictions) {
 }
 
 function removeUpload() {
-    if (webcam) {
-        webcam.stop();
-        webcam = null;
-    }
-    document.getElementById('webcam-container').innerHTML = '';
     document.getElementById('face-image').src = '#';
-    document.getElementById('face-image').style.display = 'block';
     document.querySelector('.file-upload-content').style.display = 'none';
     document.querySelector('.upload-section').style.display = 'block';
     document.querySelector('.file-upload-input').value = '';
