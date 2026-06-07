@@ -1,44 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Picker</title>
+    <title>동물상 테스트 - 나랑 닮은 동물은?</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="theme-toggle">
-        <button id="theme-btn">Light Mode</button>
-    </div>
     <div class="container">
         <header>
-            <h1>Lotto Number Picker</h1>
+            <h1>동물상 테스트</h1>
+            <p class="subtitle">AI가 분석하는 나의 동물상</p>
         </header>
+
         <main>
-            <div id="number-display" class="number-display"></div>
-            <button id="generate-btn" class="generate-btn">Generate Numbers</button>
+            <div class="upload-section" id="upload-section">
+                <div class="image-upload-wrap">
+                    <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
+                    <div class="drag-text">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1160/1160358.png" alt="upload-icon" class="upload-icon">
+                        <h3>사진을 업로드하거나 클릭하세요!</h3>
+                    </div>
+                </div>
+                <div class="webcam-btn-wrap">
+                    <button type="button" class="webcam-btn" onclick="initWebcam()">웹캠 사용하기</button>
+                </div>
+            </div>
+
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>AI가 당신의 얼굴을 분석 중입니다...</p>
+            </div>
+
+            <div class="file-upload-content" style="display: none;">
+                <img class="file-upload-image" id="face-image" src="#" alt="your image" />
+                <div id="webcam-container"></div>
+                
+                <div id="result-container" class="result-container">
+                    <h2 class="result-message"></h2>
+                    <p class="result-description"></p>
+                    <div id="label-container" class="label-container"></div>
+                    <div class="image-title-wrap">
+                        <button type="button" onclick="removeUpload()" class="remove-image">다른 사진으로 재시도</button>
+                    </div>
+                </div>
+            </div>
         </main>
+
         <section class="partnership-section">
-            <h3>Partnership Inquiry</h3>
+            <h3>문의 및 협력</h3>
             <form action="https://formspree.io/f/xeewarbz" method="POST">
-                <input type="email" name="email" placeholder="Your Email" required>
-                <textarea name="message" placeholder="Your Message" required></textarea>
-                <button type="submit" class="submit-btn">Send Inquiry</button>
+                <input type="email" name="email" placeholder="이메일 주소" required>
+                <textarea name="message" placeholder="문의 내용" required></textarea>
+                <button type="submit" class="submit-btn">보내기</button>
             </form>
         </section>
-        <section class="comments-section">
-            <div id="disqus_thread"></div>
-            <script>
-                (function() { // DON'T EDIT BELOW THIS LINE
-                var d = document, s = d.createElement('script');
-                s.src = 'https://productbuilder-52epezqran.disqus.com/embed.js';
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-                })();
-            </script>
-            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        </section>
+
+        <footer>
+            <p>&copy; 2026 동물상 테스트 AI. All Rights Reserved.</p>
+        </footer>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

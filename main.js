@@ -1,44 +1,119 @@
-const generateBtn = document.getElementById('generate-btn');
-const numberDisplay = document.getElementById('number-display');
-const themeBtn = document.getElementById('theme-btn');
-const body = document.body;
+const URL = "https://teachablemachine.withgoogle.com/models/IjLLUaOge/";
 
-// Theme Toggle Logic
-themeBtn.addEventListener('click', () => {
-    body.classList.toggle('light-mode');
-    const isLightMode = body.classList.contains('light-mode');
-    themeBtn.textContent = isLightMode ? 'Dark Mode' : 'Light Mode';
-    localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
-});
+let model, webcam, labelContainer, maxPredictions;
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'light') {
-    body.classList.add('light-mode');
-    themeBtn.textContent = 'Dark Mode';
+// Load the image model
+async function loadModel() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
 }
 
-generateBtn.addEventListener('click', () => {
-    generateAndDisplayNumbers();
-});
+loadModel();
 
-function generateAndDisplayNumbers() {
-    numberDisplay.innerHTML = '';
-    const numbers = new Set();
-    while (numbers.size < 6) {
-        numbers.add(Math.floor(Math.random() * 45) + 1);
+// Handle Image Upload
+async function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = async function(e) {
+            document.querySelector('.upload-section').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            
+            const faceImage = document.getElementById('face-image');
+            faceImage.src = e.target.result;
+            
+            // Wait for image to load before predicting
+            faceImage.onload = async function() {
+                await predict();
+                document.getElementById('loading').style.display = 'none';
+                document.querySelector('.file-upload-content').style.display = 'block';
+            };
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Handle Webcam
+async function initWebcam() {
+    document.querySelector('.upload-section').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+
+    const flip = true;
+    webcam = new tmImage.Webcam(300, 300, flip);
+    await webcam.setup();
+    await webcam.play();
+    
+    document.getElementById('loading').style.display = 'none';
+    document.querySelector('.file-upload-content').style.display = 'block';
+    document.getElementById('face-image').style.display = 'none';
+    document.getElementById('webcam-container').appendChild(webcam.canvas);
+    
+    window.requestAnimationFrame(loop);
+}
+
+async function loop() {
+    webcam.update();
+    await predict();
+    window.requestAnimationFrame(loop);
+}
+
+// Prediction Logic
+async function predict() {
+    const target = webcam ? webcam.canvas : document.getElementById('face-image');
+    const prediction = await model.predict(target);
+    
+    // Sort predictions to find the top result
+    prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+    
+    const topResult = prediction[0].className;
+    displayResults(topResult, prediction);
+}
+
+function displayResults(topResult, allPredictions) {
+    const resultMessage = document.querySelector('.result-message');
+    const resultDescription = document.querySelector('.result-description');
+    const labelContainer = document.getElementById('label-container');
+    
+    labelContainer.innerHTML = '';
+    
+    // Set Main Message & Description
+    if (topResult === "Dog") {
+        resultMessage.innerHTML = "친절한 강아지상!";
+        resultDescription.innerHTML = "당신은 밝고 활동적인 에너지를 가진 사람입니다. 주변 사람들에게 편안함과 즐거움을 주며, 솔직하고 다정한 성격으로 누구에게나 사랑받는 매력을 지니고 있네요!";
+    } else if (topResult === "Cat") {
+        resultMessage.innerHTML = "도도한 고양이상!";
+        resultDescription.innerHTML = "당신은 차분하면서도 세련된 분위기를 가진 사람입니다. 처음에는 조금 차가워 보일 수 있지만, 알면 알수록 깊은 매력을 가진 '츤데레' 스타일이시군요!";
     }
 
-    const sortedNumbers = Array.from(numbers).sort((a, b) => a - b);
-
-    sortedNumbers.forEach((number, index) => {
-        const ball = document.createElement('div');
-        ball.className = `number-ball color-${(index % 6) + 1}`;
-        ball.textContent = number;
-        numberDisplay.appendChild(ball);
-    });
+    // Display all probability bars
+    for (let i = 0; i < maxPredictions; i++) {
+        const className = allPredictions[i].className;
+        const probability = (allPredictions[i].probability * 100).toFixed(0);
+        const barClass = className.toLowerCase() + "-bar";
+        
+        const barHTML = `
+            <div class="bar-container">
+                <div class="label-name">${className === "Dog" ? "강아지" : "고양이"}</div>
+                <div class="bar-bg">
+                    <div class="bar-fill ${barClass}" style="width: ${probability}%"></div>
+                </div>
+                <div class="percent-text">${probability}%</div>
+            </div>
+        `;
+        labelContainer.innerHTML += barHTML;
+    }
 }
 
-// Initial generation
-generateAndDisplayNumbers();
-
+function removeUpload() {
+    if (webcam) {
+        webcam.stop();
+        webcam = null;
+    }
+    document.getElementById('webcam-container').innerHTML = '';
+    document.getElementById('face-image').src = '#';
+    document.getElementById('face-image').style.display = 'block';
+    document.querySelector('.file-upload-content').style.display = 'none';
+    document.querySelector('.upload-section').style.display = 'block';
+    document.querySelector('.file-upload-input').value = '';
+}
