@@ -78,10 +78,10 @@ function displayResults(topResult, allPredictions) {
     labelContainer.innerHTML = '';
     
     // Set Main Message & Description
-    if (topResult === "Dog") {
+    if (topResult === "dog") {
         resultMessage.innerHTML = "친절한 강아지상!";
         resultDescription.innerHTML = "당신은 밝고 활동적인 에너지를 가진 사람입니다. 주변 사람들에게 편안함과 즐거움을 주며, 솔직하고 다정한 성격으로 누구에게나 사랑받는 매력을 지니고 있네요!";
-    } else if (topResult === "Cat") {
+    } else if (topResult === "cat") {
         resultMessage.innerHTML = "도도한 고양이상!";
         resultDescription.innerHTML = "당신은 차분하면서도 세련된 분위기를 가진 사람입니다. 처음에는 조금 차가워 보일 수 있지만, 알면 알수록 깊은 매력을 가진 '츤데레' 스타일이시군요!";
     }
@@ -94,7 +94,7 @@ function displayResults(topResult, allPredictions) {
         
         const barHTML = `
             <div class="bar-container">
-                <div class="label-name">${className === "Dog" ? "강아지" : "고양이"}</div>
+                <div class="label-name">${className === "dog" ? "강아지" : "고양이"}</div>
                 <div class="bar-bg">
                     <div class="bar-fill ${barClass}" style="width: ${probability}%"></div>
                 </div>
