@@ -1,5 +1,22 @@
 const generateBtn = document.getElementById('generate-btn');
 const numberDisplay = document.getElementById('number-display');
+const themeBtn = document.getElementById('theme-btn');
+const body = document.body;
+
+// Theme Toggle Logic
+themeBtn.addEventListener('click', () => {
+    body.classList.toggle('light-mode');
+    const isLightMode = body.classList.contains('light-mode');
+    themeBtn.textContent = isLightMode ? 'Dark Mode' : 'Light Mode';
+    localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+});
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'light') {
+    body.classList.add('light-mode');
+    themeBtn.textContent = 'Dark Mode';
+}
 
 generateBtn.addEventListener('click', () => {
     generateAndDisplayNumbers();
@@ -24,3 +41,4 @@ function generateAndDisplayNumbers() {
 
 // Initial generation
 generateAndDisplayNumbers();
+

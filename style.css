@@ -1,30 +1,70 @@
+:root {
+    --bg-color: linear-gradient(to right, #2c3e50, #4ca1af);
+    --text-color: #fff;
+    --container-bg: rgba(0, 0, 0, 0.2);
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --header-shadow: rgba(0, 0, 0, 0.3);
+}
+
+body.light-mode {
+    --bg-color: linear-gradient(to right, #fdfbfb, #ebedee);
+    --text-color: #333;
+    --container-bg: rgba(255, 255, 255, 0.9);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --header-shadow: rgba(0, 0, 0, 0.1);
+}
+
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #2c3e50, #4ca1af);
-    color: #fff;
+    background: var(--bg-color);
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
     overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .container {
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--container-bg);
     padding: 2rem;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 20px var(--shadow-color);
     width: 90%;
     max-width: 500px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 h1 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 4px var(--header-shadow);
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#theme-btn {
+    background: none;
+    border: 2px solid var(--text-color);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+#theme-btn:hover {
+    background-color: var(--text-color);
+    color: var(--container-bg);
 }
 
 .number-display {
