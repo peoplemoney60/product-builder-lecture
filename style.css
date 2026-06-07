@@ -171,6 +171,13 @@ h1 {
     background-color: #27ae60;
 }
 
+.comments-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--header-shadow);
+    text-align: left; /* Disqus looks better left-aligned */
+}
+
 /* Ball Colors */
 .color-1 { background-color: #e74c3c; }
 .color-2 { background-color: #3498db; }
